@@ -1,0 +1,53 @@
+/* TableSection specific styles */
+.table-section {
+  @apply border-2 border-emerald-200 rounded-lg bg-emerald-50 overflow-hidden;
+}
+
+.table-section-header {
+  @apply bg-gradient-to-r from-emerald-500 to-emerald-600 px-3 py-2;
+}
+
+.table-section-header-content {
+  @apply flex flex-col sm:flex-row gap-2;
+}
+
+.table-section-name-group {
+  @apply flex items-center gap-2 text-white flex-1 min-w-0;
+}
+
+.table-section-name-icon {
+  @apply flex-shrink-0;
+}
+
+.table-section-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500;
+  @apply transition-colors duration-200;
+  @apply bg-white text-gray-900;
+}
+
+.table-section-input:hover {
+  @apply border-gray-400;
+}
+
+.table-section-input:focus {
+  @apply border-blue-500;
+}
+
+.table-section-input.source-input-control-invalid {
+  @apply border-red-600 bg-red-50;
+}
+
+.table-section-controls {
+  @apply flex gap-2 flex-1 min-w-0;
+}
+
+.table-section-delete {
+  @apply text-red-200 p-1 transition-colors flex-shrink-0;
+  @apply hover:text-white focus:outline-none focus:text-white;
+  @apply rounded focus:ring-2 focus:ring-white/50;
+}
+
+.table-section-content {
+  @apply p-3;
+}

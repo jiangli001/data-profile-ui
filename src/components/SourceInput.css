@@ -1,0 +1,40 @@
+/* SourceInput specific styles */
+.source-input-container {
+  @apply grid grid-cols-3 gap-3 p-3 bg-white rounded-lg border border-blue-100;
+}
+
+/* container wrappers for each input field use the grid columns */
+
+.source-input-label {
+  @apply text-xs font-medium text-gray-600 mb-1 block;
+}
+
+.source-input-control {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500;
+  @apply transition-colors duration-200;
+}
+
+.source-input-control:hover {
+  @apply border-gray-400;
+}
+
+.source-input-control:focus {
+  @apply border-blue-500;
+}
+
+.source-input-control-invalid {
+  @apply border-red-600 bg-red-50;
+}
+
+.source-input-error {
+  @apply mt-2 text-sm text-red-700 font-bold flex items-center gap-2;
+}
+
+.source-input-error-icon {
+  @apply inline-block w-5 h-5 rounded-full bg-red-600 text-white text-center leading-5;
+}
+
+.source-input-error-text {
+  @apply text-sm font-semibold;
+}

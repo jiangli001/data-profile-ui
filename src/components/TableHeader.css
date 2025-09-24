@@ -1,0 +1,18 @@
+/* TableHeader specific styles */
+.table-header {
+  @apply flex justify-between items-center mb-3;
+}
+
+.table-header-title {
+  @apply font-medium text-gray-700 flex items-center gap-2;
+}
+
+.table-header-icon {
+  @apply text-emerald-600;
+}
+
+.table-header-button {
+  @apply text-emerald-600 text-sm flex items-center gap-1 font-medium;
+  @apply transition-colors duration-200;
+  @apply hover:text-emerald-700 focus:outline-none focus:text-emerald-700;
+}

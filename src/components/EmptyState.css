@@ -1,0 +1,12 @@
+/* EmptyState specific styles */
+.empty-state {
+  @apply text-center py-12 text-gray-500;
+}
+
+.empty-state-icon {
+  @apply mx-auto mb-4 text-gray-300;
+}
+
+.empty-state-text {
+  @apply text-gray-500;
+}

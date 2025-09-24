@@ -1,0 +1,20 @@
+/* SourcesListSection specific styles */
+.sources-list {
+  @apply space-y-6;
+}
+
+.source-item {
+  @apply border-2 border-blue-200 rounded-xl overflow-hidden shadow-md bg-blue-50;
+}
+
+.source-item-content {
+  @apply p-4 space-y-4;
+}
+
+.source-item-tables {
+  @apply ml-4;
+}
+
+.source-item-tables-list {
+  @apply space-y-4 ml-2;
+}

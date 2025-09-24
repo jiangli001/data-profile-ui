@@ -1,0 +1,21 @@
+/* SourcePanel specific styles */
+.source-panel {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600;
+  @apply px-4 py-3 flex items-center justify-between;
+}
+
+.source-panel-toggle {
+  @apply flex items-center gap-2 text-white;
+  @apply transition-colors duration-200;
+  @apply hover:text-blue-100 focus:outline-none focus:text-blue-100;
+}
+
+.source-panel-title {
+  @apply font-semibold text-lg;
+}
+
+.source-panel-delete {
+  @apply text-red-200 p-1 transition-colors duration-200;
+  @apply hover:text-white focus:outline-none focus:text-white;
+  @apply rounded focus:ring-2 focus:ring-white/50;
+}
