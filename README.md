@@ -1,69 +1,78 @@
-# React + TypeScript + Vite
+# DBT Source YAML Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based web application for generating DBT source YAML configurations. This tool provides an intuitive interface to define data sources, tables, columns, and tests for DBT projects.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Source Management**: Add and configure multiple data sources
+- **Table Configuration**: Define tables within each source with metadata
+- **Column Definition**: Specify columns with descriptions and data types
+- **Test Configuration**: Add DBT tests (unique, not_null, accepted_values, relationships)
+- **Live YAML Preview**: Real-time generated YAML output
+- **Validation**: Built-in validation with error highlighting
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js (version 16 or higher)
+- npm or yarn package manager
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+## Setup
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd data-profile-ui
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+## Running the Application
+
+### Development Mode
+Start the development server with hot reload:
+```bash
+npm run dev
+```
+The application will be available at `http://localhost:5173`
+
+### Production Build
+Build the application for production:
+```bash
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+### Preview Production Build
+Preview the production build locally:
+```bash
+npm run preview
 ```
+
+## Development
+
+### Code Quality
+Run ESLint to check code quality:
+```bash
+npm run lint
+```
+
+### Project Structure
+```
+src/
+├── components/        # React components
+├── contexts/         # React context providers
+├── hooks/           # Custom React hooks
+├── types.ts         # TypeScript type definitions
+└── utils.ts         # Utility functions
+```
+
+## Technology Stack
+
+- **React 19** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Styling
+- **Lucide React** - Icons
+- **js-yaml** - YAML generation
