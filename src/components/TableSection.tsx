@@ -3,7 +3,6 @@ import { Table, Trash2 } from "lucide-react";
 import type {
   DbtTestTable as TableData,
   DbtTestColumn as Column,
-  DbtTest as Test,
 } from "../types";
 import { validateIdentifierName } from "../utils";
 import ColumnSection from "./ColumnSection";
@@ -29,19 +28,6 @@ interface TableSectionProps {
   ) => void;
   deleteColumn: (sourceId: string, tableId: string, columnId: string) => void;
   addTest: (sourceId: string, tableId: string, columnId: string) => void;
-  updateTest: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    testId: string,
-    updates: Partial<Test>,
-  ) => void;
-  deleteTest: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    testId: string,
-  ) => void;
   tableError?: string;
   columnErrors?: Record<string, string>;
 }
@@ -109,15 +95,13 @@ function TableSection(props: TableSectionProps): React.ReactElement {
 
       <div className="table-section-content">
         <ColumnSection
-          columns={table.columns}
+          columns={table.columns || []}
           sourceId={sourceId}
           tableId={table.id}
           addColumn={props.addColumn}
           updateColumn={props.updateColumn}
           deleteColumn={props.deleteColumn}
           addTest={props.addTest}
-          updateTest={props.updateTest}
-          deleteTest={props.deleteTest}
           columnErrors={props.columnErrors}
         />
       </div>

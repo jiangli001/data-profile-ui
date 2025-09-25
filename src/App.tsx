@@ -4,6 +4,7 @@ import ConfigHeader from "./components/ConfigHeader";
 import SourcesListSection from "./components/SourcesListSection";
 import EmptyState from "./components/EmptyState";
 import { useSources } from "./hooks/useSources";
+import { TestActionsProvider } from "./contexts/TestActionsContext";
 
 function App(): React.ReactElement {
   const {
@@ -42,24 +43,24 @@ function App(): React.ReactElement {
             {sources.length === 0 ? (
               <EmptyState />
             ) : (
-              <SourcesListSection
-                sources={sources}
-                errors={errors}
-                tableErrors={tableErrors}
-                columnErrors={columnErrors}
-                toggleSource={toggleSource}
-                deleteSource={deleteSource}
-                updateSource={updateSource}
-                addTable={addTable}
-                updateTable={updateTable}
-                deleteTable={deleteTable}
-                addColumn={addColumn}
-                updateColumn={updateColumn}
-                deleteColumn={deleteColumn}
-                addTest={addTest}
-                updateTest={updateTest}
-                deleteTest={deleteTest}
-              />
+              <TestActionsProvider updateTest={updateTest} deleteTest={deleteTest}>
+                <SourcesListSection
+                  sources={sources}
+                  errors={errors}
+                  tableErrors={tableErrors}
+                  columnErrors={columnErrors}
+                  toggleSource={toggleSource}
+                  deleteSource={deleteSource}
+                  updateSource={updateSource}
+                  addTable={addTable}
+                  updateTable={updateTable}
+                  deleteTable={deleteTable}
+                  addColumn={addColumn}
+                  updateColumn={updateColumn}
+                  deleteColumn={deleteColumn}
+                  addTest={addTest}
+                />
+              </TestActionsProvider>
             )}
           </div>
         </div>

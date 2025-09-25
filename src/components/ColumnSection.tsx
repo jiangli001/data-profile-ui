@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Columns, Plus, Trash2 } from "lucide-react";
-import type { DbtTestColumn as Column, DbtTest as Test } from "../types";
+import type { DbtTestColumn as Column } from "../types";
 import { validateIdentifierName } from "../utils";
 import TestSection from "./TestSection";
 import "./ColumnSection.css";
@@ -19,19 +19,6 @@ interface ColumnSectionProps {
   ) => void;
   deleteColumn: (sourceId: string, tableId: string, columnId: string) => void;
   addTest: (sourceId: string, tableId: string, columnId: string) => void;
-  updateTest: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    testId: string,
-    updates: Partial<Test>,
-  ) => void;
-  deleteTest: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    testId: string,
-  ) => void;
   columnErrors?: Record<string, string>;
 }
 
@@ -121,13 +108,11 @@ function ColumnSection(props: ColumnSectionProps): React.ReactElement {
 
             <div className="column-item-content">
               <TestSection
-                tests={column.tests}
+                tests={column.tests || []}
                 sourceId={sourceId}
                 tableId={tableId}
                 columnId={column.id}
                 addTest={props.addTest}
-                updateTest={props.updateTest}
-                deleteTest={props.deleteTest}
               />
             </div>
           </div>

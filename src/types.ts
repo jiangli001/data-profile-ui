@@ -2,23 +2,28 @@ export interface DbtTest {
   id: string;
   name: string;
   type: string;
-  arguments?: Record<string, any>;
   where?: string;
-  config?: Record<string, string>;
+  severity?: "error" | "warn";
+  acceptedValues?: string;
+  errorIf?: string;
+  warnIf?: string;
+  quoteValues?: boolean;
+  sourceName?: string;
+  columnName?: string;
 }
 
 export interface DbtTestColumn {
   id: string;
   name: string;
   description?: string;
-  tests: DbtTest[];
+  tests?: DbtTest[];
 }
 
 export interface DbtTestTable {
   id: string;
   name: string;
   description?: string;
-  columns: DbtTestColumn[];
+  columns?: DbtTestColumn[];
 }
 
 export interface DbtTestSource {
@@ -26,6 +31,36 @@ export interface DbtTestSource {
   name: string;
   database: string;
   schema: string;
-  tables: DbtTestTable[];
+  tables?: DbtTestTable[];
   expanded: boolean;
 }
+
+// types for the DBT test section components
+export type RelationshipArguments = {
+  to: string;
+  field: string;
+};
+
+export type TestArguments = {
+  values?: Array<string | number>;
+  valuesString?: string;
+  quote?: boolean;
+  sourceName?: string;
+  columnName?: string;
+} & Record<string, unknown>;
+
+export const TEST_TYPES = {
+  UNIQUE: "unique",
+  NOT_NULL: "not_null",
+  ACCEPTED_VALUES: "accepted_values",
+  RELATIONSHIPS: "relationships",
+} as const;
+
+export type TestType = typeof TEST_TYPES[keyof typeof TEST_TYPES];
+
+export const BUILT_IN_TESTS: readonly TestType[] = [
+  TEST_TYPES.UNIQUE,
+  TEST_TYPES.NOT_NULL,
+  TEST_TYPES.ACCEPTED_VALUES,
+  TEST_TYPES.RELATIONSHIPS,
+];

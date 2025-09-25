@@ -3,7 +3,6 @@ import type {
   DbtTestSource,
   DbtTestTable as TableData,
   DbtTestColumn as Column,
-  DbtTest as Test,
 } from "../types";
 import SourcePanel from "./SourcePanel";
 import SourceInput from "./SourceInput";
@@ -38,19 +37,6 @@ interface SourcesListSectionProps {
   ) => void;
   deleteColumn: (sourceId: string, tableId: string, columnId: string) => void;
   addTest: (sourceId: string, tableId: string, columnId: string) => void;
-  updateTest: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    testId: string,
-    updates: Partial<Test>,
-  ) => void;
-  deleteTest: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    testId: string,
-  ) => void;
   errors?: Record<string, string>;
   tableErrors?: Record<string, string>;
   columnErrors?: Record<string, string>;
@@ -78,7 +64,7 @@ function SourcesListSection(
               <div className="source-item-tables">
                 <TableHeader addTable={props.addTable} source={source} />
                 <div className="source-item-tables-list">
-                  {source.tables.map((table) => (
+                  {(source.tables || []).map((table) => (
                     <TableSection
                       key={table.id}
                       table={table}
@@ -89,8 +75,6 @@ function SourcesListSection(
                       updateColumn={props.updateColumn}
                       deleteColumn={props.deleteColumn}
                       addTest={props.addTest}
-                      updateTest={props.updateTest}
-                      deleteTest={props.deleteTest}
                       tableError={tableErrors?.[table.id]}
                       columnErrors={columnErrors}
                     />

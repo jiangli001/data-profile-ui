@@ -27,21 +27,21 @@ export function useSources() {
   const updateTable = (sourceId: string, tableId: string, updater: (table: TableData) => TableData): void => {
     updateSource(sourceId, source => ({
       ...source,
-      tables: updateNested(source.tables, tableId, updater)
+      tables: updateNested(source.tables || [], tableId, updater)
     }));
   };
 
   const updateColumn = (sourceId: string, tableId: string, columnId: string, updater: (column: Column) => Column): void => {
     updateTable(sourceId, tableId, table => ({
       ...table,
-      columns: updateNested(table.columns, columnId, updater)
+      columns: updateNested(table.columns || [], columnId, updater)
     }));
   };
 
   const updateTest = (sourceId: string, tableId: string, columnId: string, testId: string, updater: (test: Test) => Test): void => {
     updateColumn(sourceId, tableId, columnId, column => ({
       ...column,
-      tests: updateNested(column.tests, testId, updater)
+      tests: updateNested(column.tests || [], testId, updater)
     }));
   };
 
@@ -118,7 +118,7 @@ export function useSources() {
 
     updateSource(sourceId, source => ({
       ...source,
-      tables: [...source.tables, newTable]
+      tables: [...(source.tables || []), newTable]
     }));
   };
 
@@ -144,7 +144,7 @@ export function useSources() {
   const deleteTable = (sourceId: string, tableId: string): void => {
     updateSource(sourceId, source => ({
       ...source,
-      tables: source.tables.filter(t => t.id !== tableId)
+      tables: (source.tables || []).filter(t => t.id !== tableId)
     }));
   };
 
@@ -157,7 +157,7 @@ export function useSources() {
     };
     updateTable(sourceId, tableId, table => ({
       ...table,
-      columns: [...table.columns, newColumn]
+      columns: [...(table.columns || []), newColumn]
     }));
   };
 
@@ -188,7 +188,7 @@ export function useSources() {
   ): void => {
     updateTable(sourceId, tableId, table => ({
       ...table,
-      columns: table.columns.filter(c => c.id !== columnId)
+      columns: (table.columns || []).filter(c => c.id !== columnId)
     }));
   };
 
@@ -197,13 +197,11 @@ export function useSources() {
       id: 'test_' + Date.now().toString(),
       name: "",
       type: "not_null",
-      arguments: {},
       where: "",
-      config: {},
     };
     updateColumn(sourceId, tableId, columnId, column => ({
       ...column,
-      tests: [...column.tests, newTest]
+      tests: [...(column.tests || []), newTest]
     }));
   };
 
@@ -225,7 +223,7 @@ export function useSources() {
   ): void => {
     updateColumn(sourceId, tableId, columnId, column => ({
       ...column,
-      tests: column.tests.filter(test => test.id !== testId)
+      tests: (column.tests || []).filter(test => test.id !== testId)
     }));
   };
 

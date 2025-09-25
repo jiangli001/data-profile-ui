@@ -1,109 +1,155 @@
 import * as yaml from 'js-yaml';
-import type { DbtTestSource } from "./types";
+import type { DbtTestSource, DbtTestTable, DbtTest } from "./types";
+
+
+function parseAcceptedValuesForYaml(acceptedValues: string): Array<string | number> {
+  return acceptedValues.split(',').map(v => {
+    const trimmed = v.trim();
+    // Convert to number if it's a valid number, otherwise keep as string
+    const num = Number(trimmed);
+    return !isNaN(num) && isFinite(num) && trimmed !== '' ? num : trimmed;
+  }).filter(v => v !== '');
+}
+
+function buildTestConfig(test: DbtTest): Record<string, string> {
+  const config: Record<string, string> = {};
+  if (test.severity) config.severity = test.severity;
+  if (test.errorIf) config.error_if = test.errorIf;
+  if (test.warnIf) config.warn_if = test.warnIf;
+  return config;
+}
+
+function addWhereClause(testConfig: any, test: DbtTest, testType: string): void {
+  if (test.where && test.where.trim() !== "") {
+    testConfig[testType].where = test.where;
+  }
+}
+
+function addConfigToTest(testConfig: any, test: DbtTest, testType: string): void {
+  const config = buildTestConfig(test);
+  if (Object.keys(config).length > 0) {
+    testConfig[testType].config = config;
+  }
+}
+
+function transformAcceptedValuesTest(test: DbtTest): Record<string, any> {
+  if (!test.acceptedValues) return {};
+
+  const values = parseAcceptedValuesForYaml(test.acceptedValues);
+  const testConfig = {
+    [test.type]: {
+      values: values,
+      quote: test.quoteValues || false
+    }
+  };
+
+  addWhereClause(testConfig, test, test.type);
+  addConfigToTest(testConfig, test, test.type);
+
+  return testConfig;
+}
+
+function transformRelationshipsTest(test: DbtTest): Record<string, any> {
+  const testConfig = {
+    [test.type]: {
+      to: test.sourceName ? `source('${test.sourceName}')` : '',
+      field: test.columnName || ''
+    }
+  };
+
+  addWhereClause(testConfig, test, test.type);
+  addConfigToTest(testConfig, test, test.type);
+
+  return testConfig;
+}
+
+function transformSimpleTest(test: DbtTest): any {
+  if (test.where || test.severity || test.errorIf || test.warnIf) {
+    const testConfig = { [test.type]: {} };
+    addWhereClause(testConfig, test, test.type);
+    addConfigToTest(testConfig, test, test.type);
+    return testConfig;
+  }
+
+  return test.type;
+}
+
+function transformTest(test: DbtTest): any {
+  if (test.type === "custom") {
+    return test.name;
+  }
+
+  if (test.type === "accepted_values" && test.acceptedValues) {
+    return transformAcceptedValuesTest(test);
+  }
+
+  if (test.type === "relationships" && (test.sourceName || test.columnName)) {
+    return transformRelationshipsTest(test);
+  }
+
+  return transformSimpleTest(test);
+}
+
+function transformColumn(column: any): any {
+  const columnConfig: any = {
+    name: column.name
+  };
+
+  if (column.description) {
+    columnConfig.description = column.description;
+  }
+
+  if (column.tests && column.tests.length > 0) {
+    columnConfig.tests = column.tests.map(transformTest);
+  }
+
+  return columnConfig;
+}
+
+function transformTable(table: DbtTestTable): any {
+  const tableConfig: any = {
+    name: table.name
+  };
+
+  if (table.description) {
+    tableConfig.description = table.description;
+  }
+
+  if (table.columns && table.columns.length > 0) {
+    tableConfig.columns = table.columns.map(transformColumn);
+  }
+
+  return tableConfig;
+}
+
+function transformSource(source: DbtTestSource): any {
+  const sourceConfig: any = {
+    name: source.name,
+    database: source.database,
+    schema: source.schema
+  };
+
+  if (source.tables && source.tables.length > 0) {
+    sourceConfig.tables = source.tables.map(transformTable);
+  }
+
+  return sourceConfig;
+}
 
 function generateDbtSourceYaml(sources: DbtTestSource[]): string {
   const dbtConfig = {
     version: 2,
-    sources: sources.map(source => {
-      const sourceConfig: any = {
-        name: source.name,
-        database: source.database,
-        schema: source.schema
-      };
-
-      if (source.tables.length > 0) {
-        sourceConfig.tables = source.tables.map(table => {
-          const tableConfig: any = {
-            name: table.name
-          };
-
-          if (table.description) {
-            tableConfig.description = table.description;
-          }
-
-          if (table.columns.length > 0) {
-            tableConfig.columns = table.columns.map(column => {
-              const columnConfig: any = {
-                name: column.name
-              };
-
-              if (column.description) {
-                columnConfig.description = column.description;
-              }
-
-              if (column.tests.length > 0) {
-                columnConfig.tests = column.tests.map(test => {
-                  if (test.type === "custom") {
-                    return test.name;
-                  } else if (test.arguments && (Object.keys(test.arguments).length > 0 || test.type === "accepted_values")) {
-                    let args = test.arguments;
-
-                    // Ensure accepted_values has proper structure
-                    if (test.type === "accepted_values") {
-                      args = {
-                        args: {
-                          values: test.arguments.values || [],
-                          quote: test.arguments.quote !== undefined ? test.arguments.quote : false
-                        }
-                      };
-                    }
-
-                    const testConfig: any = {
-                      [test.type]: args
-                    };
-
-                    if (test.where) {
-                      testConfig[test.type].where = test.where;
-                    }
-
-                    if (test.config) {
-                      testConfig[test.type].config = test.config;
-                    }
-
-                    return testConfig;
-                  } else {
-                    const testConfig: any = test.type;
-
-                    if (test.where || test.config) {
-                      const extendedTest: any = { [test.type]: {} };
-
-                      if (test.where) {
-                        extendedTest[test.type].where = test.where;
-                      }
-
-                      if (test.config) {
-                        extendedTest[test.type].config = test.config;
-                      }
-
-                      return extendedTest;
-                    }
-
-                    return testConfig;
-                  }
-                });
-              }
-
-              return columnConfig;
-            });
-          }
-
-          return tableConfig;
-        });
-      }
-
-      return sourceConfig;
-    })
+    sources: sources.map(transformSource)
   };
 
   return yaml.dump(dbtConfig, {
     indent: 2,
-    lineWidth: -1,
     noRefs: true,
     quotingType: '"'
   });
 }
 
-// Validate that input contains only alphanumeric characters and underscores
+
 function validateIdentifierName(value: string): { isValid: boolean; message?: string } {
   const pattern = /^[a-zA-Z0-9_]*$/;
 
@@ -123,11 +169,26 @@ function validateDatabaseName(value: string): { isValid: boolean; message?: stri
   if (!pattern.test(value)) {
     return {
       isValid: false,
-      message: 'Dot a valid database pattern'
+      message: 'Invalid database pattern'
     };
   }
 
   return { isValid: true };
 }
 
-export { generateDbtSourceYaml, validateIdentifierName, validateDatabaseName };
+// Additional Utility Functions
+
+export const parseAcceptedValues = (input: string): string[] => {
+  if (!input || input.trim() === "") return [];
+
+  return input
+    .split(",")
+    .map(v => v.trim())
+    .filter(v => v !== "");
+};
+
+export {
+  generateDbtSourceYaml,
+  validateIdentifierName,
+  validateDatabaseName
+};
