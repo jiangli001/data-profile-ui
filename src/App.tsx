@@ -5,6 +5,7 @@ import SourcesListSection from "./components/SourcesListSection";
 import EmptyState from "./components/EmptyState";
 import { useSources } from "./hooks/useSources";
 import { TestActionsProvider } from "./contexts/TestActionsContext";
+import { ColumnActionsProvider } from "./contexts/ColumnActionsContext";
 
 function App(): React.ReactElement {
   const {
@@ -43,23 +44,29 @@ function App(): React.ReactElement {
             {sources.length === 0 ? (
               <EmptyState />
             ) : (
-              <TestActionsProvider updateTest={updateTest} deleteTest={deleteTest}>
-                <SourcesListSection
-                  sources={sources}
-                  errors={errors}
-                  tableErrors={tableErrors}
-                  columnErrors={columnErrors}
-                  toggleSource={toggleSource}
-                  deleteSource={deleteSource}
-                  updateSource={updateSource}
-                  addTable={addTable}
-                  updateTable={updateTable}
-                  deleteTable={deleteTable}
+              <TestActionsProvider
+                addTest={addTest}
+                updateTest={updateTest}
+                deleteTest={deleteTest}
+              >
+                <ColumnActionsProvider
                   addColumn={addColumn}
                   updateColumn={updateColumn}
                   deleteColumn={deleteColumn}
-                  addTest={addTest}
-                />
+                >
+                  <SourcesListSection
+                    sources={sources}
+                    errors={errors}
+                    tableErrors={tableErrors}
+                    columnErrors={columnErrors}
+                    toggleSource={toggleSource}
+                    deleteSource={deleteSource}
+                    updateSource={updateSource}
+                    addTable={addTable}
+                    updateTable={updateTable}
+                    deleteTable={deleteTable}
+                  />
+                </ColumnActionsProvider>
               </TestActionsProvider>
             )}
           </div>

@@ -19,6 +19,7 @@ A React-based web application for generating DBT source YAML configurations. Thi
 ## Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd data-profile-ui
@@ -32,20 +33,27 @@ A React-based web application for generating DBT source YAML configurations. Thi
 ## Running the Application
 
 ### Development Mode
+
 Start the development server with hot reload:
+
 ```bash
 npm run dev
 ```
+
 The application will be available at `http://localhost:5173`
 
 ### Production Build
+
 Build the application for production:
+
 ```bash
 npm run build
 ```
 
 ### Preview Production Build
+
 Preview the production build locally:
+
 ```bash
 npm run preview
 ```
@@ -53,12 +61,15 @@ npm run preview
 ## Development
 
 ### Code Quality
+
 Run ESLint to check code quality:
+
 ```bash
 npm run lint
 ```
 
 ### Project Structure
+
 ```
 src/
 ├── components/        # React components

@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { Table, Trash2 } from "lucide-react";
-import type {
-  DbtTestTable as TableData,
-  DbtTestColumn as Column,
-} from "../types";
-import { validateIdentifierName } from "../utils";
+import type { DbtTestTable as TableData, DbtTestColumn } from "../types";
+import { validateFieldName } from "../utils";
 import ColumnSection from "./ColumnSection";
 import "./TableSection.css";
 
@@ -15,19 +12,9 @@ interface TableSectionProps {
     sourceId: string,
     tableId: string,
     field: keyof TableData,
-    value: any,
+    value: string | DbtTestColumn[],
   ) => void;
   deleteTable: (sourceId: string, tableId: string) => void;
-  addColumn: (sourceId: string, tableId: string) => void;
-  updateColumn: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    field: keyof Column,
-    value: any,
-  ) => void;
-  deleteColumn: (sourceId: string, tableId: string, columnId: string) => void;
-  addTest: (sourceId: string, tableId: string, columnId: string) => void;
   tableError?: string;
   columnErrors?: Record<string, string>;
 }
@@ -37,7 +24,7 @@ function TableSection(props: TableSectionProps): React.ReactElement {
   const [tableNameWarning, setTableNameWarning] = useState<string>("");
 
   const handleTableNameChange = (value: string) => {
-    const validation = validateIdentifierName(value);
+    const validation = validateFieldName(value);
     setTableNameWarning(validation.isValid ? "" : validation.message || "");
     props.updateTable(sourceId, table.id, "name", value);
   };
@@ -98,10 +85,6 @@ function TableSection(props: TableSectionProps): React.ReactElement {
           columns={table.columns || []}
           sourceId={sourceId}
           tableId={table.id}
-          addColumn={props.addColumn}
-          updateColumn={props.updateColumn}
-          deleteColumn={props.deleteColumn}
-          addTest={props.addTest}
           columnErrors={props.columnErrors}
         />
       </div>

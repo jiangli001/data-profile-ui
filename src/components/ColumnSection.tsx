@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Columns, Plus, Trash2 } from "lucide-react";
 import type { DbtTestColumn as Column } from "../types";
-import { validateIdentifierName } from "../utils";
+import { validateFieldName } from "../utils";
+import { useColumnActions } from "../contexts/ColumnActionsContext";
 import TestSection from "./TestSection";
 import "./ColumnSection.css";
 
@@ -9,30 +10,23 @@ interface ColumnSectionProps {
   columns: Column[];
   sourceId: string;
   tableId: string;
-  addColumn: (sourceId: string, tableId: string) => void;
-  updateColumn: (
-    sourceId: string,
-    tableId: string,
-    columnId: string,
-    field: keyof Column,
-    value: any,
-  ) => void;
-  deleteColumn: (sourceId: string, tableId: string, columnId: string) => void;
-  addTest: (sourceId: string, tableId: string, columnId: string) => void;
   columnErrors?: Record<string, string>;
 }
 
 function ColumnSection(props: ColumnSectionProps): React.ReactElement {
   const { columns, sourceId, tableId } = props;
-  const [columnWarnings, setColumnWarnings] = useState<Record<string, string>>({});
+  const { addColumn, updateColumn, deleteColumn } = useColumnActions();
+  const [columnWarnings, setColumnWarnings] = useState<Record<string, string>>(
+    {},
+  );
 
   const handleColumnNameChange = (columnId: string, value: string) => {
-    const validation = validateIdentifierName(value);
-    setColumnWarnings(prev => ({
+    const validation = validateFieldName(value);
+    setColumnWarnings((prev) => ({
       ...prev,
-      [columnId]: validation.isValid ? "" : validation.message || ""
+      [columnId]: validation.isValid ? "" : validation.message || "",
     }));
-    props.updateColumn(sourceId, tableId, columnId, "name", value);
+    updateColumn(sourceId, tableId, columnId, "name", value);
   };
 
   const getColumnError = (column: Column) => {
@@ -53,7 +47,7 @@ function ColumnSection(props: ColumnSectionProps): React.ReactElement {
           Columns
         </h5>
         <button
-          onClick={() => props.addColumn(sourceId, tableId)}
+          onClick={() => addColumn(sourceId, tableId)}
           className="column-section-button"
         >
           <Plus size={14} />
@@ -73,7 +67,9 @@ function ColumnSection(props: ColumnSectionProps): React.ReactElement {
                       type="text"
                       placeholder="Column Name"
                       value={column.name}
-                      onChange={(e) => handleColumnNameChange(column.id, e.target.value)}
+                      onChange={(e) =>
+                        handleColumnNameChange(column.id, e.target.value)
+                      }
                       className={`column-item-input ${hasColumnValidationError(column) ? "source-input-control-invalid" : ""}`}
                     />
                   </div>
@@ -84,7 +80,7 @@ function ColumnSection(props: ColumnSectionProps): React.ReactElement {
                     placeholder="Description (optional)"
                     value={column.description}
                     onChange={(e) =>
-                      props.updateColumn(
+                      updateColumn(
                         sourceId,
                         tableId,
                         column.id,
@@ -95,9 +91,7 @@ function ColumnSection(props: ColumnSectionProps): React.ReactElement {
                     className="column-item-input"
                   />
                   <button
-                    onClick={() =>
-                      props.deleteColumn(sourceId, tableId, column.id)
-                    }
+                    onClick={() => deleteColumn(sourceId, tableId, column.id)}
                     className="column-item-delete"
                   >
                     <Trash2 size={14} />
@@ -112,7 +106,6 @@ function ColumnSection(props: ColumnSectionProps): React.ReactElement {
                 sourceId={sourceId}
                 tableId={tableId}
                 columnId={column.id}
-                addTest={props.addTest}
               />
             </div>
           </div>

@@ -56,7 +56,7 @@ export const TEST_TYPES = {
   RELATIONSHIPS: "relationships",
 } as const;
 
-export type TestType = typeof TEST_TYPES[keyof typeof TEST_TYPES];
+export type TestType = (typeof TEST_TYPES)[keyof typeof TEST_TYPES];
 
 export const BUILT_IN_TESTS: readonly TestType[] = [
   TEST_TYPES.UNIQUE,
@@ -64,3 +64,16 @@ export const BUILT_IN_TESTS: readonly TestType[] = [
   TEST_TYPES.ACCEPTED_VALUES,
   TEST_TYPES.RELATIONSHIPS,
 ];
+
+// Config types for YAML generation
+export type DbtTestColumnConfig = Partial<Omit<DbtTestColumn, "tests">> & {
+  tests?: (string | Record<string, unknown>)[];
+};
+
+export type DbtTestTableConfig = Partial<Omit<DbtTestTable, "columns">> & {
+  columns?: DbtTestColumnConfig[];
+};
+
+export type DbtTestSourceConfig = Partial<Omit<DbtTestSource, "tables">> & {
+  tables?: DbtTestTableConfig[];
+};

@@ -10,30 +10,22 @@ interface AcceptedValuesInputProps {
 const AcceptedValuesInput: React.FC<AcceptedValuesInputProps> = ({
   acceptedValues,
   quote,
-  onUpdate
+  onUpdate,
 }) => {
-  const handleValuesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate(e.target.value, quote);
-  };
-
-  const handleQuoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate(acceptedValues, e.target.checked);
-  };
-
   return (
     <div className="test-item-accepted-values">
       <input
         type="text"
         placeholder="Enter accepted values separated by commas (e.g., 1, 2, 3, 4)"
         value={acceptedValues}
-        onChange={handleValuesChange}
+        onChange={(e) => onUpdate(e.target.value, quote)}
         className="test-item-input margin-bottom"
       />
       <label className="test-item-checkbox-label">
         <input
           type="checkbox"
           checked={quote}
-          onChange={handleQuoteChange}
+          onChange={(e) => onUpdate(acceptedValues, e.target.checked)}
           className="test-item-checkbox"
         />
         Quote values

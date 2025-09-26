@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { DbtTestSource } from "../types";
-import { validateIdentifierName, validateDatabaseName } from "../utils";
+import { validateFieldName, validateDatabaseName } from "../utils";
 import "./SourceInput.css";
 
 interface SourceInputProps {
@@ -19,7 +19,8 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
   const [schemaWarning, setSchemaWarning] = useState<string>("");
 
   const updateSourceName = (database: string, schema: string) => {
-    const sourceName = database && schema ? `${database}_${schema}`.replace(".", "_") : '';
+    const sourceName =
+      database && schema ? `${database}_${schema}`.replace(".", "_") : "";
     props.updateSource(props.source.id, "name", sourceName);
   };
 
@@ -31,7 +32,7 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
   };
 
   const handleSchemaChange = (value: string) => {
-    const validation = validateIdentifierName(value);
+    const validation = validateFieldName(value);
     setSchemaWarning(validation.isValid ? "" : validation.message || "");
     props.updateSource(props.source.id, "schema", value);
     updateSourceName(props.source.database, value);
@@ -52,7 +53,9 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
         {(props.error || databaseWarning) && (
           <div className="source-input-error" role="alert">
             <strong className="source-input-error-icon">!</strong>
-            <span className="source-input-error-text">{props.error || databaseWarning}</span>
+            <span className="source-input-error-text">
+              {props.error || databaseWarning}
+            </span>
           </div>
         )}
       </div>

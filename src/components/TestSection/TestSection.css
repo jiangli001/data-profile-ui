@@ -40,7 +40,86 @@
 .test-item-select {
   @apply flex-1 min-w-0 px-2 py-1 text-sm border border-purple-300 rounded bg-white;
   @apply focus:outline-none focus:ring-2 focus:ring-purple-500;
-  @apply transition-all duration-200;
+}
+
+/* Shared react-select styles */
+.react-select-container-test-type,
+.react-select-container-severity {
+  @apply flex-1;
+}
+
+.react-select-container-test-type .react-select-test-type__control,
+.react-select-container-severity .react-select-severity__control {
+  @apply px-2 py-1 text-sm border border-purple-300 rounded bg-white;
+  min-height: auto;
+}
+
+.react-select-container-test-type .react-select-test-type__control--is-focused,
+.react-select-container-severity .react-select-severity__control--is-focused {
+  @apply border-purple-500 ring-2 ring-purple-500;
+}
+
+.react-select-container-test-type .react-select-test-type__value-container,
+.react-select-container-test-type .react-select-test-type__input-container,
+.react-select-container-severity .react-select-severity__value-container,
+.react-select-container-severity .react-select-severity__input-container {
+  padding: 0;
+  margin: 0;
+}
+
+.react-select-container-test-type .react-select-test-type__dropdown-indicator,
+.react-select-container-severity .react-select-severity__dropdown-indicator {
+  @apply text-purple-500 p-1;
+}
+
+.react-select-container-test-type .react-select-test-type__indicator-separator,
+.react-select-container-severity .react-select-severity__indicator-separator {
+  display: none;
+}
+
+.react-select-container-test-type .react-select-test-type__placeholder,
+.react-select-container-severity .react-select-severity__placeholder {
+  @apply text-sm text-gray-500;
+}
+
+.react-select-container-test-type .react-select-test-type__single-value,
+.react-select-container-severity .react-select-severity__single-value {
+  @apply text-sm text-gray-900;
+}
+
+.react-select-container-test-type .react-select-test-type__menu,
+.react-select-container-severity .react-select-severity__menu {
+  @apply rounded border border-purple-300 shadow-lg;
+  z-index: 1000;
+}
+
+.react-select-container-test-type .react-select-test-type__option--is-focused,
+.react-select-container-severity .react-select-severity__option--is-focused {
+  @apply bg-purple-100 text-purple-800;
+}
+
+.react-select-container-test-type .react-select-test-type__option--is-selected,
+.react-select-container-severity .react-select-severity__option--is-selected {
+  @apply bg-purple-500 text-white;
+  font-weight: 600;
+}
+
+.react-select-container-test-type
+  .react-select-test-type__option--is-selected.react-select-test-type__option--is-focused,
+.react-select-container-severity
+  .react-select-severity__option--is-selected.react-select-severity__option--is-focused {
+  @apply bg-purple-600;
+}
+
+/* Specific styles for test type dropdown */
+.react-select-container-test-type {
+  min-width: 0;
+}
+
+.react-select-container-test-type .react-select-test-type__option {
+  @apply text-sm py-2 px-3 text-gray-700;
+  font-weight: 500;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .test-item-delete {
@@ -69,9 +148,16 @@
 }
 
 .test-item-config-input {
-  @apply px-2 py-1 text-xs border border-purple-300 rounded bg-white;
+  @apply px-2 py-1 text-sm border border-purple-300 rounded bg-white;
   @apply focus:outline-none focus:ring-2 focus:ring-purple-500;
   @apply transition-all duration-200;
+}
+
+/* Specific styles for severity dropdown */
+.react-select-container-severity .react-select-severity__option {
+  @apply text-sm py-1 px-2 text-gray-700;
+  font-weight: 500;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .test-item-accepted-values {

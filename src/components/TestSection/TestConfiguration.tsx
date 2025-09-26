@@ -1,4 +1,5 @@
 import React from "react";
+import Select, { type SingleValue } from "react-select";
 import "./TestSection.css";
 
 interface TestConfigurationProps {
@@ -12,6 +13,11 @@ interface TestConfigurationProps {
   onWarnIfChange: (warnIf: string) => void;
 }
 
+interface SeverityOptionType {
+  value: "error" | "warn" | "";
+  label: string;
+}
+
 const TestConfiguration: React.FC<TestConfigurationProps> = ({
   where,
   severity,
@@ -20,8 +26,27 @@ const TestConfiguration: React.FC<TestConfigurationProps> = ({
   onWhereChange,
   onSeverityChange,
   onErrorIfChange,
-  onWarnIfChange
+  onWarnIfChange,
 }) => {
+  const severityOptions: SeverityOptionType[] = [
+    { value: "error", label: "error" },
+    { value: "warn", label: "warn" },
+  ];
+
+  const selectedSeverity =
+    severityOptions.find((option) => option.value === severity) || null;
+
+  const handleSeverityChange = (
+    selectedOption: SingleValue<SeverityOptionType>,
+  ) => {
+    if (selectedOption) {
+      const value =
+        selectedOption.value === ""
+          ? undefined
+          : (selectedOption.value as "error" | "warn");
+      onSeverityChange(value);
+    }
+  };
 
   return (
     <div className="test-item-controls">
@@ -34,15 +59,17 @@ const TestConfiguration: React.FC<TestConfigurationProps> = ({
       />
 
       <div className="test-item-config-grid">
-        <select
-          value={severity || ""}
-          onChange={(e) => onSeverityChange(e.target.value as "error" | "warn" | undefined || undefined)}
-          className="test-item-config-input"
-        >
-          <option value="">Select severity</option>
-          <option value="error">error</option>
-          <option value="warn">warn</option>
-        </select>
+        <Select
+          value={selectedSeverity}
+          onChange={handleSeverityChange}
+          options={severityOptions}
+          isSearchable={true}
+          placeholder="Select Severity"
+          className="react-select-container-severity"
+          classNamePrefix="react-select-severity"
+          menuPortalTarget={document.body}
+          menuPosition="fixed"
+        />
         <input
           type="text"
           placeholder="Error if"

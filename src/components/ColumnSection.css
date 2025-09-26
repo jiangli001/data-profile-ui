@@ -48,6 +48,10 @@
   @apply bg-white text-gray-900;
 }
 
+.column-item-input::placeholder {
+  @apply text-sm;
+}
+
 .column-item-input:hover {
   @apply border-gray-400;
 }

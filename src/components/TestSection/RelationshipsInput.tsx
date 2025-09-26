@@ -10,30 +10,22 @@ interface RelationshipsInputProps {
 const RelationshipsInput: React.FC<RelationshipsInputProps> = ({
   sourceName,
   columnName,
-  onUpdate
+  onUpdate,
 }) => {
-  const handleSourceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate(e.target.value, columnName);
-  };
-
-  const handleColumnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate(sourceName, e.target.value);
-  };
-
   return (
     <div className="test-item-relationships">
       <input
         type="text"
         placeholder="Source name"
         value={sourceName}
-        onChange={handleSourceNameChange}
+        onChange={(e) => onUpdate(e.target.value, columnName)}
         className="test-item-input margin-bottom"
       />
       <input
         type="text"
         placeholder="Column name"
         value={columnName}
-        onChange={handleColumnNameChange}
+        onChange={(e) => onUpdate(sourceName, e.target.value)}
         className="test-item-input margin-bottom"
       />
     </div>

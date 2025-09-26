@@ -1,80 +1,88 @@
-import * as yaml from 'js-yaml';
-import type { DbtTestSource, DbtTestTable, DbtTest } from "./types";
+import * as yaml from "js-yaml";
+import type {
+  DbtTestSource,
+  DbtTestTable,
+  DbtTestColumn,
+  DbtTest,
+  DbtTestColumnConfig,
+  DbtTestTableConfig,
+  DbtTestSourceConfig,
+} from "./types";
 
-
-function parseAcceptedValuesForYaml(acceptedValues: string): Array<string | number> {
-  return acceptedValues.split(',').map(v => {
-    const trimmed = v.trim();
-    // Convert to number if it's a valid number, otherwise keep as string
-    const num = Number(trimmed);
-    return !isNaN(num) && isFinite(num) && trimmed !== '' ? num : trimmed;
-  }).filter(v => v !== '');
+function parseAcceptedValuesForYaml(
+  acceptedValues: string,
+): Array<string | number> {
+  return acceptedValues
+    .split(",")
+    .map((v) => {
+      const trimmed = v.trim();
+      // Convert to number if it's a valid number, otherwise keep as string
+      const num = Number(trimmed);
+      return !isNaN(num) && isFinite(num) && trimmed !== "" ? num : trimmed;
+    })
+    .filter((v) => v !== "");
 }
 
-function buildTestConfig(test: DbtTest): Record<string, string> {
-  const config: Record<string, string> = {};
-  if (test.severity) config.severity = test.severity;
-  if (test.errorIf) config.error_if = test.errorIf;
-  if (test.warnIf) config.warn_if = test.warnIf;
-  return config;
-}
+function buildTestWithConfig(
+  typeSpecificConfig: Record<string, unknown>,
+  test: DbtTest,
+): string | Record<string, unknown> {
+  const commonConfig: Record<string, string> = {};
 
-function addWhereClause(testConfig: any, test: DbtTest, testType: string): void {
+  if (test.severity) commonConfig.severity = test.severity;
+  if (test.errorIf) commonConfig.error_if = test.errorIf;
+  if (test.warnIf) commonConfig.warn_if = test.warnIf;
   if (test.where && test.where.trim() !== "") {
-    testConfig[testType].where = test.where;
+    commonConfig.where = test.where;
   }
+
+  const hasCommonConfig = Object.keys(commonConfig).length > 0;
+  const hasTypeSpecificConfig = Object.keys(typeSpecificConfig).length > 0;
+
+  if (!hasCommonConfig && !hasTypeSpecificConfig) {
+    return test.type;
+  }
+
+  const testConfig: Record<string, unknown> = { ...typeSpecificConfig };
+  if (hasCommonConfig) {
+    testConfig.config = commonConfig;
+  }
+
+  return { [test.type]: testConfig };
 }
 
-function addConfigToTest(testConfig: any, test: DbtTest, testType: string): void {
-  const config = buildTestConfig(test);
-  if (Object.keys(config).length > 0) {
-    testConfig[testType].config = config;
-  }
-}
-
-function transformAcceptedValuesTest(test: DbtTest): Record<string, any> {
+function transformAcceptedValuesTest(test: DbtTest): Record<string, unknown> {
   if (!test.acceptedValues) return {};
 
   const values = parseAcceptedValuesForYaml(test.acceptedValues);
-  const testConfig = {
-    [test.type]: {
+  const typeSpecificConfig = {
+    arguments: {
       values: values,
-      quote: test.quoteValues || false
-    }
+      quote: test.quoteValues,
+    },
   };
 
-  addWhereClause(testConfig, test, test.type);
-  addConfigToTest(testConfig, test, test.type);
-
-  return testConfig;
+  return buildTestWithConfig(typeSpecificConfig, test) as Record<
+    string,
+    unknown
+  >;
 }
 
-function transformRelationshipsTest(test: DbtTest): Record<string, any> {
-  const testConfig = {
-    [test.type]: {
-      to: test.sourceName ? `source('${test.sourceName}')` : '',
-      field: test.columnName || ''
-    }
+function transformRelationshipsTest(test: DbtTest): Record<string, unknown> {
+  const typeSpecificConfig = {
+    arguments: {
+      to: test.sourceName ? `source('${test.sourceName}')` : "",
+      field: test.columnName || "",
+    },
   };
 
-  addWhereClause(testConfig, test, test.type);
-  addConfigToTest(testConfig, test, test.type);
-
-  return testConfig;
+  return buildTestWithConfig(typeSpecificConfig, test) as Record<
+    string,
+    unknown
+  >;
 }
 
-function transformSimpleTest(test: DbtTest): any {
-  if (test.where || test.severity || test.errorIf || test.warnIf) {
-    const testConfig = { [test.type]: {} };
-    addWhereClause(testConfig, test, test.type);
-    addConfigToTest(testConfig, test, test.type);
-    return testConfig;
-  }
-
-  return test.type;
-}
-
-function transformTest(test: DbtTest): any {
+function transformTest(test: DbtTest): string | Record<string, unknown> {
   if (test.type === "custom") {
     return test.name;
   }
@@ -87,12 +95,12 @@ function transformTest(test: DbtTest): any {
     return transformRelationshipsTest(test);
   }
 
-  return transformSimpleTest(test);
+  return buildTestWithConfig({}, test);
 }
 
-function transformColumn(column: any): any {
-  const columnConfig: any = {
-    name: column.name
+function transformColumn(column: DbtTestColumn): DbtTestColumnConfig {
+  const columnConfig: DbtTestColumnConfig = {
+    name: column.name,
   };
 
   if (column.description) {
@@ -106,9 +114,9 @@ function transformColumn(column: any): any {
   return columnConfig;
 }
 
-function transformTable(table: DbtTestTable): any {
-  const tableConfig: any = {
-    name: table.name
+function transformTable(table: DbtTestTable): DbtTestTableConfig {
+  const tableConfig: DbtTestTableConfig = {
+    name: table.name,
   };
 
   if (table.description) {
@@ -122,11 +130,11 @@ function transformTable(table: DbtTestTable): any {
   return tableConfig;
 }
 
-function transformSource(source: DbtTestSource): any {
-  const sourceConfig: any = {
+function transformSource(source: DbtTestSource): DbtTestSourceConfig {
+  const sourceConfig: DbtTestSourceConfig = {
     name: source.name,
     database: source.database,
-    schema: source.schema
+    schema: source.schema,
   };
 
   if (source.tables && source.tables.length > 0) {
@@ -139,56 +147,46 @@ function transformSource(source: DbtTestSource): any {
 function generateDbtSourceYaml(sources: DbtTestSource[]): string {
   const dbtConfig = {
     version: 2,
-    sources: sources.map(transformSource)
+    sources: sources.map(transformSource),
   };
 
   return yaml.dump(dbtConfig, {
     indent: 2,
     noRefs: true,
-    quotingType: '"'
+    quotingType: '"',
   });
 }
 
-
-function validateIdentifierName(value: string): { isValid: boolean; message?: string } {
+function validateFieldName(value: string): {
+  isValid: boolean;
+  message?: string;
+} {
   const pattern = /^[a-zA-Z0-9_]*$/;
 
   if (!pattern.test(value)) {
     return {
       isValid: false,
-      message: 'Only letters, numbers, and underscores are allowed'
+      message: "Only letters, numbers, and underscores are allowed",
     };
   }
 
   return { isValid: true };
 }
 
-function validateDatabaseName(value: string): { isValid: boolean; message?: string } {
+function validateDatabaseName(value: string): {
+  isValid: boolean;
+  message?: string;
+} {
   const pattern = /^((sf|ol_latest|ol|backend|file)\.)?[a-zA-Z0-9_]*$/;
 
   if (!pattern.test(value)) {
     return {
       isValid: false,
-      message: 'Invalid database pattern'
+      message: "Invalid database pattern",
     };
   }
 
   return { isValid: true };
 }
 
-// Additional Utility Functions
-
-export const parseAcceptedValues = (input: string): string[] => {
-  if (!input || input.trim() === "") return [];
-
-  return input
-    .split(",")
-    .map(v => v.trim())
-    .filter(v => v !== "");
-};
-
-export {
-  generateDbtSourceYaml,
-  validateIdentifierName,
-  validateDatabaseName
-};
+export { generateDbtSourceYaml, validateFieldName, validateDatabaseName };

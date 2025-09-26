@@ -26,6 +26,10 @@
   @apply bg-white text-gray-900;
 }
 
+.table-section-input::placeholder {
+  @apply text-sm;
+}
+
 .table-section-input:hover {
   @apply border-gray-400;
 }
