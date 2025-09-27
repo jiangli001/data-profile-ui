@@ -14,10 +14,10 @@ interface OptionType {
   label: string;
 }
 
-const TestTypeSelector: React.FC<TestTypeSelectorProps> = ({
+function TestTypeSelector({
   value,
   onChange,
-}) => {
+}: TestTypeSelectorProps): React.ReactElement {
   const options: OptionType[] = BUILT_IN_TESTS.map((testType) => ({
     value: testType,
     label: testType,
@@ -48,6 +48,6 @@ const TestTypeSelector: React.FC<TestTypeSelectorProps> = ({
       />
     </div>
   );
-};
+}
 
 export default TestTypeSelector;

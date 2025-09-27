@@ -8,7 +8,7 @@ interface ColumnActionsContextType {
     tableId: string,
     columnId: string,
     field: keyof DbtTestColumn,
-    value: any,
+    value: string,
   ) => void;
   deleteColumn: (sourceId: string, tableId: string, columnId: string) => void;
 }

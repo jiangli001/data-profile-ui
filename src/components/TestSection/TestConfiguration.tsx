@@ -18,7 +18,7 @@ interface SeverityOptionType {
   label: string;
 }
 
-const TestConfiguration: React.FC<TestConfigurationProps> = ({
+function TestConfiguration({
   where,
   severity,
   errorIf,
@@ -27,7 +27,7 @@ const TestConfiguration: React.FC<TestConfigurationProps> = ({
   onSeverityChange,
   onErrorIfChange,
   onWarnIfChange,
-}) => {
+}: TestConfigurationProps): React.ReactElement {
   const severityOptions: SeverityOptionType[] = [
     { value: "error", label: "error" },
     { value: "warn", label: "warn" },
@@ -87,6 +87,6 @@ const TestConfiguration: React.FC<TestConfigurationProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default TestConfiguration;

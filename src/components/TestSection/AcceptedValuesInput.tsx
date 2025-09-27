@@ -7,11 +7,11 @@ interface AcceptedValuesInputProps {
   onUpdate: (values: string, quote: boolean) => void;
 }
 
-const AcceptedValuesInput: React.FC<AcceptedValuesInputProps> = ({
+function AcceptedValuesInput({
   acceptedValues,
   quote,
   onUpdate,
-}) => {
+}: AcceptedValuesInputProps): React.ReactElement {
   return (
     <div className="test-item-accepted-values">
       <input
@@ -32,6 +32,6 @@ const AcceptedValuesInput: React.FC<AcceptedValuesInputProps> = ({
       </label>
     </div>
   );
-};
+}
 
 export default AcceptedValuesInput;

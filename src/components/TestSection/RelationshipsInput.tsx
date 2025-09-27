@@ -7,11 +7,11 @@ interface RelationshipsInputProps {
   onUpdate: (sourceName: string, columnName: string) => void;
 }
 
-const RelationshipsInput: React.FC<RelationshipsInputProps> = ({
+function RelationshipsInput({
   sourceName,
   columnName,
   onUpdate,
-}) => {
+}: RelationshipsInputProps): React.ReactElement {
   return (
     <div className="test-item-relationships">
       <input
@@ -30,6 +30,6 @@ const RelationshipsInput: React.FC<RelationshipsInputProps> = ({
       />
     </div>
   );
-};
+}
 
 export default RelationshipsInput;
