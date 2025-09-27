@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React from "react";
 import { Trash2 } from "lucide-react";
 import type { DbtTest as Test } from "../../types";
 import { TEST_TYPES } from "../../types";
@@ -14,27 +14,20 @@ interface TestItemProps {
   onDeleteTest: () => void;
 }
 
-const TestItem = memo<TestItemProps>(({ test, onUpdateTest, onDeleteTest }) => {
-  const handleTypeChange = (newType: string) => {
-    try {
-      const updates: Partial<Test> = { type: newType };
-
-      // // Reset all fields when switching type
-      // updates.acceptedValues = undefined;
-      // updates.sourceName = undefined;
-      // updates.columnName = undefined;
-      // updates.where = "";
-
-      onUpdateTest(updates);
-    } catch (error) {
-      console.error("Error updating test type:", error);
-    }
-  };
-
+function TestItem({
+  test,
+  onUpdateTest,
+  onDeleteTest,
+}: TestItemProps): React.ReactElement {
   return (
     <div className="test-item">
       <div className="test-item-header">
-        <TestTypeSelector value={test.type} onChange={handleTypeChange} />
+        <TestTypeSelector
+          value={test.type}
+          onChange={(newType: string) => {
+            onUpdateTest({ type: newType });
+          }}
+        />
         <button onClick={onDeleteTest} className="test-item-delete">
           <Trash2 size={12} />
         </button>
@@ -72,8 +65,6 @@ const TestItem = memo<TestItemProps>(({ test, onUpdateTest, onDeleteTest }) => {
       />
     </div>
   );
-});
-
-TestItem.displayName = "TestItem";
+}
 
 export default TestItem;
