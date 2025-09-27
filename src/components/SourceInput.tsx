@@ -17,6 +17,9 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
   const invalidClass = props.error ? "source-input-control-invalid" : "";
   const [databaseWarning, setDatabaseWarning] = useState<string>("");
   const [schemaWarning, setSchemaWarning] = useState<string>("");
+  const [requiredWarning, setRequiredWarning] = useState<
+    Record<string, string>
+  >({});
 
   const updateSourceName = (database: string, schema: string) => {
     const sourceName =
@@ -25,6 +28,18 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
   };
 
   const handleDatabaseChange = (value: string) => {
+    if (!value) {
+      setRequiredWarning((prev) => ({
+        ...prev,
+        database: "Database is required",
+      }));
+    } else {
+      setRequiredWarning((prev) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { database, ...rest } = prev;
+        return rest;
+      });
+    }
     const validation = validateDatabaseName(value);
     setDatabaseWarning(validation.isValid ? "" : validation.message || "");
     props.updateSource(props.source.id, "database", value);
@@ -32,6 +47,15 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
   };
 
   const handleSchemaChange = (value: string) => {
+    if (!value) {
+      setRequiredWarning((prev) => ({ ...prev, schema: "Schema is required" }));
+    } else {
+      setRequiredWarning((prev) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { schema, ...rest } = prev;
+        return rest;
+      });
+    }
     const validation = validateFieldName(value);
     setSchemaWarning(validation.isValid ? "" : validation.message || "");
     props.updateSource(props.source.id, "schema", value);
@@ -50,6 +74,14 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
           className={`source-input-control ${invalidClass}`}
           required
         />
+        {requiredWarning.database && (
+          <div className="source-input-error" role="alert">
+            <strong className="source-input-error-icon">!</strong>
+            <span className="source-input-error-text">
+              {requiredWarning.database}
+            </span>
+          </div>
+        )}
         {(props.error || databaseWarning) && (
           <div className="source-input-error" role="alert">
             <strong className="source-input-error-icon">!</strong>
@@ -69,6 +101,14 @@ function SourceInput(props: SourceInputProps): React.ReactElement {
           className={`source-input-control ${invalidClass}`}
           required={true}
         />
+        {requiredWarning.schema && (
+          <div className="source-input-error" role="alert">
+            <strong className="source-input-error-icon">!</strong>
+            <span className="source-input-error-text">
+              {requiredWarning.schema}
+            </span>
+          </div>
+        )}
         {schemaWarning && (
           <div className="source-input-error" role="alert">
             <strong className="source-input-error-icon">!</strong>

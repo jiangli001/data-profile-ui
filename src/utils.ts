@@ -166,7 +166,7 @@ function validateFieldName(value: string): {
   if (!pattern.test(value)) {
     return {
       isValid: false,
-      message: "Only letters, numbers, and underscores are allowed",
+      message: "Invalid field name pattern",
     };
   }
 
